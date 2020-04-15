@@ -9,11 +9,20 @@ import java.time.LocalDateTime;
 public class SavingsAccount implements Account {
 
     private BigDecimal balance = BigDecimal.ZERO;
+    private Long accountNumber;
     // Public for testing purposes
     public LocalDateTime lastBalanceChangeDate = LocalDateTime.now();
     private static final BigDecimal TRANSFER_FEE = BigDecimal.ZERO;
     private static final BigDecimal WITHDRAW_FEE = new BigDecimal("0.02");
     private static final BigDecimal INCREASE_INDEX = new BigDecimal("0.22");
+
+    public SavingsAccount(Long accountNumber) {
+        if(accountNumber == null) {
+            throw new RuntimeException("Account number must not be null");
+        }
+
+        this.accountNumber = accountNumber;
+    }
 
     @Override
     public BigDecimal getBalance() {
@@ -41,5 +50,10 @@ public class SavingsAccount implements Account {
 
     private long getTimeDifferenceInCompleteMinutes() {
         return Duration.between(this.lastBalanceChangeDate, LocalDateTime.now()).toMinutes();
+    }
+
+    @Override
+    public Long getAccountNumber() {
+        return accountNumber;
     }
 }

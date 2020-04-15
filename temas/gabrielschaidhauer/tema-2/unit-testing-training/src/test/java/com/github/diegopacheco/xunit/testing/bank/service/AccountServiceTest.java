@@ -3,15 +3,14 @@ package com.github.diegopacheco.xunit.testing.bank.service;
 import com.github.diegopacheco.xunit.testing.bank.model.Account;
 import com.github.diegopacheco.xunit.testing.bank.model.DefaultAccount;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.temporal.ChronoUnit;
 
 import com.github.diegopacheco.xunit.testing.bank.model.SavingsAccount;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AccountServiceTest {
 
@@ -27,7 +26,7 @@ public class AccountServiceTest {
   @Test()
   void shouldHaveDepositInDefaultAccount() {
     AccountService service = new AccountService();
-    DefaultAccount defaultAccount = new DefaultAccount();
+    DefaultAccount defaultAccount = new DefaultAccount(1L);
     defaultAccount.setBalance(new BigDecimal("20.01"));
 
     service.deposit(defaultAccount, new BigDecimal("2500.00"));
@@ -37,7 +36,7 @@ public class AccountServiceTest {
   @Test()
   void shouldHaveDepositInSavingsAccount() {
     AccountService service = new AccountService();
-    SavingsAccount account = new SavingsAccount();
+    SavingsAccount account = new SavingsAccount(1L);
     account.setBalance(new BigDecimal("20.01"));
 
     service.deposit(account, new BigDecimal("2500.00"));
@@ -47,7 +46,7 @@ public class AccountServiceTest {
   @Test()
   void shouldThrowErrorWitNegativeValueDefaultAccount() {
     AccountService service = new AccountService();
-    DefaultAccount defaultAccount = new DefaultAccount();
+    DefaultAccount defaultAccount = new DefaultAccount(1L);
 
     assertThrows(
         RuntimeException.class,
@@ -57,7 +56,7 @@ public class AccountServiceTest {
   @Test()
   void shouldThrowErrorWitNegativeValueSavingsAccount() {
     AccountService service = new AccountService();
-    SavingsAccount account = new SavingsAccount();
+    SavingsAccount account = new SavingsAccount(1L);
 
     assertThrows(
             RuntimeException.class,
@@ -68,7 +67,7 @@ public class AccountServiceTest {
   @Test()
   void shouldThrowErrorWitZeroValueDefaultAccount() {
     AccountService service = new AccountService();
-    DefaultAccount defaultAccount = new DefaultAccount();
+    DefaultAccount defaultAccount = new DefaultAccount(1L);
 
     assertThrows(
         RuntimeException.class,
@@ -78,7 +77,7 @@ public class AccountServiceTest {
   @Test()
   void shouldThrowErrorWitZeroValueSavingsAccount() {
     AccountService service = new AccountService();
-    SavingsAccount account = new SavingsAccount();
+    SavingsAccount account = new SavingsAccount(1L);
 
     assertThrows(
             RuntimeException.class,
@@ -88,7 +87,7 @@ public class AccountServiceTest {
   @Test()
   void shouldThrowErrorWitNullValueSavingsAccount() {
     AccountService service = new AccountService();
-    SavingsAccount account = new SavingsAccount();
+    SavingsAccount account = new SavingsAccount(1L);
 
     assertThrows(
             RuntimeException.class,
@@ -98,7 +97,7 @@ public class AccountServiceTest {
   @Test()
   void shouldThrowErrorWitNullValueDefaultAccount() {
     AccountService service = new AccountService();
-    DefaultAccount account = new DefaultAccount();
+    DefaultAccount account = new DefaultAccount(1L);
 
     assertThrows(
             RuntimeException.class,
@@ -109,7 +108,7 @@ public class AccountServiceTest {
   void shouldHaveDepositBIgNumberInAccountDefaultAccount() {
   
     AccountService service = new AccountService();
-    DefaultAccount defaultAccount = new DefaultAccount();
+    DefaultAccount defaultAccount = new DefaultAccount(1L);
     defaultAccount.setBalance(new BigDecimal("29999999999999999999999999999999999999999999999999999999990000000000000000000000000000000000000000000000000000000000000000009.01"));
 
     service.deposit(defaultAccount, new BigDecimal("0.50"));
@@ -121,7 +120,7 @@ public class AccountServiceTest {
   void shouldHaveDepositBIgNumberInAccountSavingsAccount() {
 
     AccountService service = new AccountService();
-    SavingsAccount account = new SavingsAccount();
+    SavingsAccount account = new SavingsAccount(1L);
     account.setBalance(new BigDecimal("29999999999999999999999999999999999999999999999999999999990000000000000000000000000000000000000000000000000000000000000000009.01"));
 
     service.deposit(account, new BigDecimal("0.50"));
@@ -132,7 +131,7 @@ public class AccountServiceTest {
   @Test
   void shouldDepositSavingsAndGetNewValue() {
     AccountService service = new AccountService();
-    SavingsAccount account = new SavingsAccount();
+    SavingsAccount account = new SavingsAccount(1L);
     service.deposit(account, new BigDecimal("100"));
     account.lastBalanceChangeDate = account.lastBalanceChangeDate.minus(1, ChronoUnit.MINUTES);
     assertEquals(new BigDecimal("122.00"), account.getBalance());
@@ -141,7 +140,7 @@ public class AccountServiceTest {
   @Test
   void shouldDepositSavingsAndGetNewValueafterTwoSeconds() {
     AccountService service = new AccountService();
-    SavingsAccount account = new SavingsAccount();
+    SavingsAccount account = new SavingsAccount(1L);
     service.deposit(account, new BigDecimal("100"));
     account.lastBalanceChangeDate = account.lastBalanceChangeDate.minus(2, ChronoUnit.MINUTES);
     assertEquals(new BigDecimal("144.00"), account.getBalance());
@@ -150,8 +149,8 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenTransgerNegativeValueDefaultAccount() {
     AccountService service = new AccountService();
-    Account accountOrigin = new DefaultAccount();
-    Account accountDestination = new DefaultAccount();
+    Account accountOrigin = new DefaultAccount(1L);
+    Account accountDestination = new DefaultAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.transfer(accountOrigin, accountDestination, new BigDecimal("-10"));
     });
@@ -160,8 +159,8 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenTransferNegativeValueSavingsAccount() {
     AccountService service = new AccountService();
-    Account accountOrigin = new SavingsAccount();
-    Account accountDestination = new SavingsAccount();
+    Account accountOrigin = new SavingsAccount(1L);
+    Account accountDestination = new SavingsAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.transfer(accountOrigin, accountDestination, new BigDecimal("-10"));
     });
@@ -170,8 +169,8 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenTansferZeroValueSavingsAccount() {
     AccountService service = new AccountService();
-    Account accountOrigin = new SavingsAccount();
-    Account accountDestination = new SavingsAccount();
+    Account accountOrigin = new SavingsAccount(1L);
+    Account accountDestination = new SavingsAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.transfer(accountOrigin, accountDestination, new BigDecimal("0"));
     });
@@ -180,8 +179,8 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenTransferZeroValueDefaultAccount() {
     AccountService service = new AccountService();
-    Account accountOrigin = new DefaultAccount();
-    Account accountDestination = new DefaultAccount();
+    Account accountOrigin = new DefaultAccount(1L);
+    Account accountDestination = new DefaultAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.transfer(accountOrigin, accountDestination, new BigDecimal("0"));
     });
@@ -190,8 +189,8 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenTransferNullValueSavingsAccount() {
     AccountService service = new AccountService();
-    Account accountOrigin = new SavingsAccount();
-    Account accountDestination = new SavingsAccount();
+    Account accountOrigin = new SavingsAccount(1L);
+    Account accountDestination = new SavingsAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.transfer(accountOrigin, accountDestination, null);
     });
@@ -200,8 +199,8 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenTransferNullValueDefaultAccount() {
     AccountService service = new AccountService();
-    Account accountOrigin = new DefaultAccount();
-    Account accountDestination = new DefaultAccount();
+    Account accountOrigin = new DefaultAccount(1L);
+    Account accountDestination = new DefaultAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.transfer(accountOrigin, accountDestination, null);
     });
@@ -210,8 +209,8 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorSavingsAccountOriginIsNull() {
     AccountService service = new AccountService();
-    Account accountOrigin = new SavingsAccount();
-    Account accountDestination = new SavingsAccount();
+    Account accountOrigin = new SavingsAccount(1L);
+    Account accountDestination = new SavingsAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.transfer(null, accountDestination, new BigDecimal("10"));
     });
@@ -220,8 +219,8 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorSavingsAccountDestinationIsNull() {
     AccountService service = new AccountService();
-    Account accountOrigin = new SavingsAccount();
-    Account accountDestination = new SavingsAccount();
+    Account accountOrigin = new SavingsAccount(1L);
+    Account accountDestination = new SavingsAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.transfer(accountDestination, null, new BigDecimal("10"));
     });
@@ -230,8 +229,8 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenDefaultAccountOriginIsNull() {
     AccountService service = new AccountService();
-    Account accountOrigin = new DefaultAccount();
-    Account accountDestination = new DefaultAccount();
+    Account accountOrigin = new DefaultAccount(1L);
+    Account accountDestination = new DefaultAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.transfer(null, accountDestination, new BigDecimal("10"));
     });
@@ -240,8 +239,8 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenDefaultAccountDestinationIsNull() {
     AccountService service = new AccountService();
-    Account accountOrigin = new DefaultAccount();
-    Account accountDestination = new DefaultAccount();
+    Account accountOrigin = new DefaultAccount(1L);
+    Account accountDestination = new DefaultAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.transfer(accountOrigin, null, new BigDecimal("10"));
     });
@@ -250,8 +249,8 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenInsuficientBalanceDefaultAccountTransfer() {
     AccountService service = new AccountService();
-    Account accountOrigin = new DefaultAccount();
-    Account accountDestination = new DefaultAccount();
+    Account accountOrigin = new DefaultAccount(1L);
+    Account accountDestination = new DefaultAccount(1L);
     service.deposit(accountOrigin, new BigDecimal("10"));
     assertThrows(RuntimeException.class, () -> {
       service.transfer(accountOrigin, accountDestination, new BigDecimal("11"));
@@ -261,8 +260,8 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenInsuficientBalanceSavingsAccountTransfer() {
     AccountService service = new AccountService();
-    Account accountOrigin = new SavingsAccount();
-    Account accountDestination = new SavingsAccount();
+    Account accountOrigin = new SavingsAccount(1L);
+    Account accountDestination = new SavingsAccount(1L);
     service.deposit(accountOrigin, new BigDecimal("10"));
     assertThrows(RuntimeException.class, () -> {
       service.transfer(accountOrigin, accountDestination, new BigDecimal("11"));
@@ -272,18 +271,18 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenInsuficientBalanceFeeDefaultAccountTransfer() {
     AccountService service = new AccountService();
-    Account accountOrigin = new DefaultAccount();
-    Account accountDestination = new SavingsAccount();
+    Account accountOrigin = new DefaultAccount(1L);
+    Account accountDestination = new SavingsAccount(1L);
     service.deposit(accountOrigin, new BigDecimal("100"));
     assertThrows(RuntimeException.class, () -> {
       service.transfer(accountOrigin, accountDestination, new BigDecimal("100"));
     });
   }
 
- /* @Test
+  @Test
   void shouldWithdrawValueDefaultAccount() {
     AccountService service = new AccountService();
-    Account account = new DefaultAccount();
+    Account account = new DefaultAccount(1L);
     service.deposit(account, new BigDecimal("100"));
     BigDecimal withdrawed = service.withdraw(account, new BigDecimal("50"));
     BigDecimal currentBalance = account.getBalance();
@@ -295,19 +294,19 @@ public class AccountServiceTest {
   @Test
   void shouldWithdrawValueSavingsAccount() {
     AccountService service = new AccountService();
-    Account account = new SavingsAccount();
+    Account account = new SavingsAccount(1L);
     service.deposit(account, new BigDecimal("100"));
     BigDecimal withdrawed = service.withdraw(account, new BigDecimal("50"));
     BigDecimal currentBalance = account.getBalance();
 
     assertEquals(new BigDecimal("50.00"), withdrawed);
     assertEquals(new BigDecimal("49.00"), currentBalance);
-  }*/
+  }
 
   @Test
   void shouldThrowErrorWhenWithdrawNegativeValueDefaultAccount() {
     AccountService service = new AccountService();
-    Account account = new DefaultAccount();
+    Account account = new DefaultAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.withdraw(account, new BigDecimal("-10"));
     });
@@ -316,7 +315,7 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenWithdrawNegativeValueSavingsAccount() {
     AccountService service = new AccountService();
-    Account account = new SavingsAccount();
+    Account account = new SavingsAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.withdraw(account, new BigDecimal("-10"));
     });
@@ -325,7 +324,7 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenWithdrawZeroValueSavingsAccount() {
     AccountService service = new AccountService();
-    Account account = new SavingsAccount();
+    Account account = new SavingsAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.withdraw(account, new BigDecimal("0"));
     });
@@ -334,7 +333,7 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenWithdrawZeroValueDefaultAccount() {
     AccountService service = new AccountService();
-    Account account = new DefaultAccount();
+    Account account = new DefaultAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.withdraw(account, new BigDecimal("0"));
     });
@@ -343,7 +342,7 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenWithdrawNullValueSavingsAccount() {
     AccountService service = new AccountService();
-    Account account = new SavingsAccount();
+    Account account = new SavingsAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.withdraw(account, null);
     });
@@ -352,7 +351,7 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenWithdrawNullValueDefaultAccount() {
     AccountService service = new AccountService();
-    Account account = new DefaultAccount();
+    Account account = new DefaultAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.withdraw(account, null);
     });
@@ -361,7 +360,7 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorSavingsAccountIsNull() {
     AccountService service = new AccountService();
-    Account account = new SavingsAccount();
+    Account account = new SavingsAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.withdraw(null, new BigDecimal("10"));
     });
@@ -370,7 +369,7 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenDefaultAccountIsNull() {
     AccountService service = new AccountService();
-    Account account = new DefaultAccount();
+    Account account = new DefaultAccount(1L);
     assertThrows(RuntimeException.class, () -> {
       service.withdraw(null, new BigDecimal("10"));
     });
@@ -379,7 +378,7 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenInsuficientBalanceDefaultAccount() {
     AccountService service = new AccountService();
-    Account account = new DefaultAccount();
+    Account account = new DefaultAccount(1L);
     service.deposit(account, new BigDecimal("10"));
     assertThrows(RuntimeException.class, () -> {
       service.withdraw(account, new BigDecimal("11"));
@@ -389,7 +388,7 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenInsuficientBalanceSavingsAccount() {
     AccountService service = new AccountService();
-    Account account = new SavingsAccount();
+    Account account = new SavingsAccount(1L);
     service.deposit(account, new BigDecimal("10"));
     assertThrows(RuntimeException.class, () -> {
       service.withdraw(account, new BigDecimal("11"));
@@ -399,7 +398,7 @@ public class AccountServiceTest {
   @Test
   void shouldThrowErrorWhenInsuficientBalanceFeeSavingsAccount() {
     AccountService service = new AccountService();
-    Account account = new SavingsAccount();
+    Account account = new SavingsAccount(1L);
     service.deposit(account, new BigDecimal("100"));
     assertThrows(RuntimeException.class, () -> {
       service.withdraw(account, new BigDecimal("100"));
@@ -407,26 +406,39 @@ public class AccountServiceTest {
   }
 
   @Test
-  void shouldWithdrawValueDefaultAccount() {
+  void shouldThrowErrorWhenFetchingAccountWithoutNumber() {
     AccountService service = new AccountService();
-    Account account = new DefaultAccount();
-    service.deposit(account, new BigDecimal("100"));
-    BigDecimal withdrawed = service.withdraw(account, new BigDecimal("50"));
-    BigDecimal currentBalance = account.getBalance();
-
-    assertEquals(new BigDecimal("50.00"), withdrawed);
-    assertEquals(new BigDecimal("50.00"), currentBalance);
+    assertThrows(RuntimeException.class, () -> {
+      service.getAccount(null);
+    });
   }
 
   @Test
-  void shouldWithdrawValueSavingsAccount() {
+  void shouldTreturnNullWhenFetchingNullAccount() {
     AccountService service = new AccountService();
-    Account account = new SavingsAccount();
-    service.deposit(account, new BigDecimal("100"));
-    BigDecimal withdrawed = service.withdraw(account, new BigDecimal("50"));
-    BigDecimal currentBalance = account.getBalance();
+    assertNull(service.getAccount(1L));
+  }
 
-    assertEquals(new BigDecimal("50.00"), withdrawed);
-    assertEquals(new BigDecimal("49.00"), currentBalance);
+  @Test
+  void shouldCreateSavingsAccountWithNoAccount() {
+    AccountService service = new AccountService();
+    Long accountNumber = service.createSavingsAccount();
+    assertEquals(accountNumber, service.getAccount(accountNumber).getAccountNumber());
+  }
+
+  @Test
+  void shouldCreateDefaultAccountTwoAccounts() {
+    AccountService service = new AccountService();
+    service.createSavingsAccount();
+    Long accountNumber = service.createAccount();
+    assertEquals(accountNumber, service.getAccount(accountNumber).getAccountNumber());
+  }
+
+  @Test
+  void shouldCreateSavingsAccountTwoAccounts() {
+    AccountService service = new AccountService();
+    service.createAccount();
+    Long accountNumber = service.createSavingsAccount();
+    assertEquals(accountNumber, service.getAccount(accountNumber).getAccountNumber());
   }
 }

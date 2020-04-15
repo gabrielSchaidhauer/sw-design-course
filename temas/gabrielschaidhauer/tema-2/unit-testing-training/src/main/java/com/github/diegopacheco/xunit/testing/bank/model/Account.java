@@ -7,4 +7,5 @@ public interface Account {
     void setBalance(BigDecimal value);
     BigDecimal getTransferFee();
     BigDecimal getWithdrawFee();
+    Long getAccountNumber();
 }

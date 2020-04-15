@@ -4,9 +4,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import com.github.diegopacheco.xunit.testing.bank.model.Account;
+import com.github.diegopacheco.xunit.testing.bank.model.AccountsStore;
 import com.github.diegopacheco.xunit.testing.bank.model.DefaultAccount;
+import com.github.diegopacheco.xunit.testing.bank.model.SavingsAccount;
 
 public class AccountService {
+
+  private AccountsStore store = new AccountsStore();
 
   public void deposit(Account account, BigDecimal value) {
     if (account == null) {
@@ -56,5 +60,24 @@ public class AccountService {
     if(accountFrom.getBalance().compareTo(value.add(taxValue)) < 0) {
       throw new RuntimeException("You don't have enough balance");
     }
+  }
+
+  public Long createAccount() {
+    Account account = new DefaultAccount(store.getLastAccountNumber() + 1L);
+    store.addAccount(account);
+    return account.getAccountNumber();
+  }
+
+  public Long createSavingsAccount() {
+    Account account = new SavingsAccount(store.getLastAccountNumber() + 1L);
+    store.addAccount(account);
+    return account.getAccountNumber();
+  }
+
+  public Account getAccount(Long accountNumber) {
+    if(accountNumber == null) {
+      throw new RuntimeException("Account number must not be null");
+    }
+    return store.getAccount(accountNumber);
   }
 }
